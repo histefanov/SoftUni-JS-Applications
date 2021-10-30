@@ -1,7 +1,14 @@
 function solve() {
+    const infoBox = document.querySelector('#info .info');
 
-    function depart() {
-        console.log('Depart TODO...');
+    let stop = {
+        name: 'Depot',
+        next: '0361'
+    };
+
+    async function depart() {
+        const nextStop = await fetch(`http://localhost:3030/jsonstore/bus/schedule/${stop.next}`);
+        
     }
 
     function arrive() {
