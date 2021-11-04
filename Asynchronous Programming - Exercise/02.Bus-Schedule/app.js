@@ -10,19 +10,19 @@ function solve() {
 
     async function depart() {
         departBtn.disabled = true;
-        arriveBtn.disabled = false;
-
+        
         const res = await fetch(`http://localhost:3030/jsonstore/bus/schedule/${stop.next}`);
         
         if (res.ok == false) {
             infoBox.textContent = 'Error';
-            arriveBtn.disabled = true;
             return;
         }
-
+        
         stop = await res.json();
         
         infoBox.textContent = `Next stop ${stop.name}`;
+        
+        arriveBtn.disabled = false;
     }
 
     function arrive() {
