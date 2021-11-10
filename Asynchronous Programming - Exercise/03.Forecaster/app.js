@@ -14,8 +14,12 @@ function attachEvents() {
 
     submitBtn.addEventListener('click', getWeather);
 
-    async function getWeather(ev) {  
+    async function getWeather() {  
         forecastDiv.style.display = 'block';
+        if (currentConditionsDiv.children.length > 1) {
+            currentConditionsDiv.lastElementChild.remove();
+            upcomingConditionsDiv.lastElementChild.remove();
+        }
 
         const res = await fetch(`http://localhost:3030/jsonstore/forecaster/locations`);
         const data = await res.json();
@@ -28,12 +32,14 @@ function attachEvents() {
             return;
         }
 
-        getCurrentConditions(location.code); 
+        getCurrentConditions(location.code);
+        getUpcomingConditions(location.code);
     }
 
     async function getCurrentConditions(code) {
-        const res = await fetch(`http://localhost:3030/jsonstore/forecaster/upcoming/${code}`);
+        const res = await fetch(`http://localhost:3030/jsonstore/forecaster/today/${code}`);
         const data = await res.json();
+
 
         const forecast = createElement('div', { className: 'forecasts' }, 
             createElement('span', { className: 'condition symbol'}, symbolMapper[data.forecast.condition]),
@@ -45,12 +51,23 @@ function attachEvents() {
         );
 
         currentConditionsDiv.appendChild(forecast);
-        console.log(forecast);
     }
 
     async function getUpcomingConditions(code) {
-        const res = await fetch(`http://localhost:3030/jsonstore/forecaster/today/${code}`);
+        const res = await fetch(`http://localhost:3030/jsonstore/forecaster/upcoming/${code}`);
         const data = await res.json();
+
+        const forecast = createElement('div', { className: 'forecast-info' });
+
+        for (const day of data.forecast) {
+            forecast.appendChild(createElement('span', { className: 'upcoming' }, 
+                createElement('span', { className: 'symbol' }, symbolMapper[day.condition]),
+                createElement('span', { className: 'forecast-data' }, `${day.low}\u00B0/${day.high}\u00B0`),
+                createElement('span', { className: 'forecast-data' }, day.condition)
+            ));
+        }
+
+        upcomingConditionsDiv.appendChild(forecast);
     }
 
     function createElement(tagName, atts, ...content) {
