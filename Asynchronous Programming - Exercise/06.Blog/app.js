@@ -3,6 +3,7 @@ function attachEvents() {
     const postTitle = document.getElementById('post-title');
     const postBody = document.getElementById('post-body');
     const postComments = document.getElementById('post-comments');
+    let posts;
 
     document.getElementById('btnLoadPosts').addEventListener('click', loadPosts);
     document.getElementById('btnViewPost').addEventListener('click', loadPostDetails);
@@ -13,7 +14,7 @@ function attachEvents() {
         }
 
         const res = await fetch('http://localhost:3030/jsonstore/blog/posts');
-        const posts = await res.json();
+        posts = await res.json();
 
         for (const key in posts) {
             dropdown.appendChild(createElement('option', { value: key }, posts[key].title));
@@ -21,7 +22,20 @@ function attachEvents() {
     }
 
     async function loadPostDetails() {
-        //const selectedPost = dropdown.
+        postComments.replaceChildren();
+        const post = posts[dropdown.value];
+        
+        postTitle.textContent = post.title;
+        postBody.textContent = post.body;
+
+        const res = await fetch(`http://localhost:3030/jsonstore/blog/comments`);
+        const data = await res.json();
+
+        const comments = Object.values(data).filter((c) => c.postId == dropdown.value);
+        
+        for (const comment of comments) {
+            postComments.appendChild(createElement('li', { id: comment.id }, comment.text));
+        }
     }
 
     function createElement(tagName, atts, ...content) {
