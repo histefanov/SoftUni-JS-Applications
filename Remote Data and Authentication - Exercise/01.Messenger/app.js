@@ -11,6 +11,8 @@ function attachEvents() {
     submitBtn.addEventListener('click', handleSubmit);
     refreshBtn.addEventListener('click', handleRefresh);
 
+    handleRefresh();
+
     async function handleSubmit() {
         const author = authorField.value.trim();
         const msgText = msgTextField.value.trim();
