@@ -37,7 +37,7 @@ async function onLogin(event) {
             email: data.email,
             id: data._id,
             token: data.accessToken
-        }))
+        }));
 
         form.reset();
         updateNav();

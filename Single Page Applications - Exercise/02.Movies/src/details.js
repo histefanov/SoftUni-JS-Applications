@@ -20,7 +20,7 @@ async function getMovie(id) {
 
     if (userData != null) {
         requests.push(
-            fetch(`http://localhost:3030/data/likes?where=movieId%3D%22${id}%22%20and%20_ownerId%3D%22${userData.id}%22&count`));
+            fetch(`http://localhost:3030/data/likes?where=movieId%3D%22${id}%22%20and%20_ownerId%3D%22${userData.id}%22`));
     }
 
     const [movieRes, likesRes, hasLikedRes] = await Promise.all(requests)
@@ -47,10 +47,10 @@ function createDetails(movie, likes, hasLiked) {
             controls.appendChild(e('a', { className: 'btn btn-danger', href: '#' }, 'Delete'));
             controls.appendChild(e('a', { className: 'btn btn-warning', href: '#' }, 'Edit'));
         } else {
-            if (hasLiked) {
-                controls.appendChild(e('a', { className: 'btn btn-primary', href: '#' }, 'Unlike'));
+            if (hasLiked.length > 0) {
+                controls.appendChild(e('a', { className: 'btn btn-primary', href: '#', onClick: onUnlike }, 'Unlike'));
             } else {
-                controls.appendChild(e('a', { className: 'btn btn-primary', href: '#' }, 'Like'));
+                controls.appendChild(e('a', { className: 'btn btn-primary', href: '#', onClick: onLike }, 'Like'));
             }
             
         }
@@ -69,4 +69,32 @@ function createDetails(movie, likes, hasLiked) {
     );
 
     return element;
+
+    async function onLike() {
+        const res = await fetch('http://localhost:3030/data/likes', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Authorization': userData.token
+            },
+            body: JSON.stringify({
+                movieId: movie._id
+            })
+        });
+
+        showDetails(movie._id);
+    }
+
+    async function onUnlike() {
+        const likeId = hasLiked[0]._id;
+
+        const res = await fetch('http://localhost:3030/data/likes/' + likeId, {
+            method: 'delete',
+            headers: {
+                'X-Authorization': userData.token
+            }
+        });
+
+        showDetails(movie._id);
+    }
 }
