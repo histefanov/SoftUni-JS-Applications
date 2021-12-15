@@ -1,8 +1,5 @@
 import { page, render } from './lib.js';
 import { homePage } from './views/home.js';
-
-/* debug */
-import * as api from './api/data.js';
 import { catalogPage } from './views/catalog.js';
 import { loginPage } from './views/login.js';
 import { registerPage } from './views/register.js';
@@ -12,7 +9,6 @@ import { createPage } from './views/create.js';
 import { detailsPage } from './views/details.js';
 import { editPage } from './views/edit.js';
 import { profilePage } from './views/profile.js';
-window.api = api;
 
 const root = document.querySelector('main');
 document.getElementById('logoutBtn').addEventListener('click', onLogout);
@@ -40,6 +36,7 @@ function decorateContext(ctx, next) {
 function onLogout() {
     logout();
     updateUserNav();
+    page.redirect('/');
 }
 
 function updateUserNav() {
